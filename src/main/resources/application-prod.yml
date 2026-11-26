@@ -1,0 +1,13 @@
+# Perfil de produção: todos os segredos devem vir de variáveis de ambiente.
+springdoc:
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+
+server:
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    root: INFO
