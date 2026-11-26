@@ -13,20 +13,35 @@ API REST da **NUMMIA**, plataforma de gestão financeira pessoal com automaçõe
 
 ## Como rodar
 
-### Opção 1 — Docker (tudo junto)
+O banco padrão atual é o **Supabase** (perfil `supabase`, ativo por padrão). A senha vem **somente** da variável `DB_PASSWORD` (Supabase > Project Settings > Database) — nunca a coloque em arquivos versionados.
+
+### Opção 1 — Local com Maven
 
 ```bash
-cp .env.example .env        # preencha JWT_SECRET (openssl rand -base64 48)
-docker compose up --build   # Postgres + API em http://localhost:8080
-docker compose --profile automation up   # inclui o n8n em http://localhost:5678
+export DB_PASSWORD='senha-do-supabase'
+./mvnw spring-boot:run          # perfis dev + supabase
 ```
 
-### Opção 2 — Local (para desenvolver)
+### Opção 2 — Docker
 
 ```bash
-docker compose up -d postgres   # ou um PostgreSQL local com banco/usuário/senha "nummia"
-./mvnw spring-boot:run          # perfil "dev" por padrão
+cp .env.example .env            # preencha DB_PASSWORD e JWT_SECRET
+docker compose up --build
 ```
+
+### Usando um PostgreSQL local em vez do Supabase
+
+```bash
+docker compose --profile local-db up -d postgres
+SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
+```
+
+### Observações sobre o Supabase
+
+- As tabelas ficam no schema **`nummia`**, não em `public`, para não serem expostas pela API REST automática do Supabase (PostgREST). O Flyway cria o schema na primeira execução.
+- A conexão usa `sslmode=require`.
+- O host direto `db.<projeto>.supabase.co` só tem **IPv6** nos planos sem o add-on de IPv4. Se a sua rede não tiver IPv6 (erro `UnknownHostException` ou timeout), use o **Session Pooler** (porta 5432) do painel *Connect* do Supabase:
+  `DB_URL=jdbc:postgresql://aws-0-<regiao>.pooler.supabase.com:5432/postgres?sslmode=require` e `DB_USERNAME=postgres.<id-do-projeto>`. Evite o Transaction Pooler (porta 6543).
 
 - Swagger: http://localhost:8080/swagger-ui.html
 - Health check: http://localhost:8080/actuator/health
@@ -36,7 +51,8 @@ docker compose up -d postgres   # ou um PostgreSQL local com banco/usuário/senh
 
 | Variável | Descrição | Padrão |
 |---|---|---|
-| `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | Conexão PostgreSQL | `localhost:5432/nummia`, `nummia`/`nummia` |
+| `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | Conexão PostgreSQL | Supabase do projeto, `postgres` / — |
+| `DB_SCHEMA` | Schema das tabelas no perfil `supabase` | `nummia` |
 | `JWT_SECRET` | Segredo HS256 (mín. 32 caracteres). **Obrigatório fora do perfil dev** | — |
 | `JWT_ACCESS_TTL` / `JWT_REFRESH_TTL` | Validade dos tokens | `15m` / `30d` |
 | `CORS_ALLOWED_ORIGINS` | Origens do Front-End (separadas por vírgula) | `http://localhost:5173` |
