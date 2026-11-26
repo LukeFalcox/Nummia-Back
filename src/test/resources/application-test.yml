@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:nummia;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  flyway:
+    enabled: true
+
+nummia:
+  jwt:
+    secret: test-secret-test-secret-test-secret-0123456789
+  cors:
+    allowed-origins: http://localhost:5173
+
+logging:
+  level:
+    root: WARN

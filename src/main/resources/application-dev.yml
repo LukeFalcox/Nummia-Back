@@ -1,0 +1,8 @@
+# Perfil de desenvolvimento local. NÃO usar em produção.
+nummia:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-change-me-please-0123456789abcdef}
+
+logging:
+  level:
+    com.devfalco.nummia: DEBUG
