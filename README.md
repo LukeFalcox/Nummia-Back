@@ -90,6 +90,8 @@ Princípios do planejamento aplicados:
 
 ## Endpoints
 
+> **Front-End:** o guia [`docs/INTEGRACAO-FRONTEND.md`](docs/INTEGRACAO-FRONTEND.md) traz o fluxo de autenticação, os CRUDs por tela e os arquivos prontos [`types.ts`](docs/frontend/types.ts) e [`api.ts`](docs/frontend/api.ts) (cliente Axios).
+
 Todos sob `/api`, autenticados com `Authorization: Bearer <accessToken>` (exceto `/api/auth/**`). Documentação completa no Swagger.
 
 | Recurso | Endpoints |
